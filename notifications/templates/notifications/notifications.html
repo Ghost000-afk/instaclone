@@ -1,0 +1,87 @@
+{% extends 'posts/base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2 class="mb-4 text-center">Notifications</h2>
+    
+    {% if notifications %}
+        <div class="list-group">
+            {% for notification in notifications %}
+                <div class="list-group-item d-flex flex-column mb-3 p-4 border rounded shadow-sm">
+                    <div class="d-flex justify-content-between align-items-start">
+                        {% if notification.notification_type == 'like' %}
+                            <strong>
+                                <a href="{% url 'profile' user_id=notification.sender.id %}" class="text-decoration-none text-dark">
+                                    {{ notification.sender.user.username }}
+                                </a>
+                            </strong> liked your post.
+                        {% elif notification.notification_type == 'comment' %}
+                            <strong>
+                                <a href="{% url 'profile' user_id=notification.sender.id %}" class="text-decoration-none text-dark">
+                                    {{ notification.sender.user.username }}
+                                </a>
+                            </strong> commented on your post.
+                        {% elif notification.notification_type == 'follow' %}
+                            <strong>
+                                <a href="{% url 'profile' user_id=notification.sender.id %}" class="text-decoration-none text-dark">
+                                    {{ notification.sender.user.username }}
+                                </a>
+                            </strong> started following you.
+                        {% elif notification.notification_type == 'message' %}
+                            <strong>
+                                <a href="{% url 'conversation_detail' notification.sender.id %}" class="text-decoration-none text-dark">
+                                    {{ notification.sender.user.username }}
+                                </a>
+                            </strong> sent you a message.
+                        {% endif %}
+                    </div>
+                    {% if notification.post %}
+                        <a href="{% url 'post_detail' notification.post.id %}" class="btn btn-outline-primary mt-2">View Post</a>
+                    {% endif %}
+                    <small class="text-muted mt-2 d-block">{{ notification.timestamp }}</small>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <p class="text-center text-muted mt-4">No notifications available.</p>
+    {% endif %}
+</div>
+
+<style>
+    .list-group-item {
+        background-color: #ffffff;
+        border: 1px solid #dee2e6;
+        border-radius: 8px;
+        padding: 20px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+    .list-group-item a {
+        color: #007bff;
+        text-decoration: none;
+    }
+
+    .list-group-item a:hover {
+        text-decoration: underline;
+    }
+
+    .text-center {
+        text-align: center;
+    }
+
+    .btn-outline-primary {
+        border-color: #007bff;
+        color: #007bff;
+    }
+
+    .btn-outline-primary:hover {
+        background-color: #007bff;
+        color: #ffffff;
+    }
+
+    .text-muted {
+        color: #6c757d;
+    }
+</style>
+{% endblock %}

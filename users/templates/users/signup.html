@@ -1,0 +1,82 @@
+{% extends 'posts/base.html' %}
+{% block content %}
+<div class="container mt-5">
+    <style>
+        .signup-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 70vh; /* Высота контейнера, чтобы форма была по центру страницы */
+        }
+
+        .signup-container h2 {
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .signup-form {
+            width: 100%;
+            max-width: 400px; /* Максимальная ширина формы */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .signup-form input {
+            width: 100%; /* Поля занимают всю ширину контейнера */
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ced4da;
+            border-radius: 4px;
+        }
+
+        .btn-primary {
+            width: 100%; /* Кнопка занимает всю ширину контейнера */
+            padding: 10px;
+            font-size: 16px;
+        }
+
+        .login-link {
+            text-align: center;
+        }
+
+        .form-row {
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+        }
+
+        .form-row label {
+            font-size: 14px; /* Размер шрифта для лейблов */
+            margin-bottom: 5px; /* Отступ между лейблом и полем */
+            color: #495057; /* Цвет текста лейбла */
+        }
+
+        .form-row input {
+            width: 100%; /* Поля занимают всю ширину контейнера */
+        }
+
+        .form-row .form-control {
+            border-radius: 4px; /* Скругление углов полей ввода */
+        }
+    </style>
+
+    <div class="signup-container">
+        <h2>Sign Up</h2>
+        <form method="POST" class="signup-form">
+            {% csrf_token %}
+            {% for field in form %}
+                <div class="form-row">
+                    {{ field.label_tag }}
+                    {{ field }}
+                </div>
+            {% endfor %}
+            <button type="submit" class="btn btn-primary">Sign Up</button>
+        </form>
+        <p class="mt-3 login-link">
+            Already have an account? <a href="{% url 'login' %}">Login</a>.
+        </p>
+    </div>
+</div>
+{% endblock %}

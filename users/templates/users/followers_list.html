@@ -1,0 +1,19 @@
+{% extends 'posts/base.html' %}
+
+{% block content %}
+<h2>{{ user_profile.user.username }}'s Followers</h2>
+
+<!-- Search Form -->
+<form method="GET" action=".">
+    <input type="text" name="q" placeholder="Search followers" value="{{ query|default:'' }}">
+    <button type="submit" class="btn btn-primary">Search</button>
+</form>
+
+<ul>
+    {% for follower in followers %}
+        <li><a href="{% url 'profile' user_id=follower.id %}">{{ follower.user.username }}</a></li>
+    {% empty %}
+        <p>No followers found.</p>
+    {% endfor %}
+</ul>
+{% endblock %}

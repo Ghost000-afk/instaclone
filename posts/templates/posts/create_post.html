@@ -1,0 +1,60 @@
+{% extends 'posts/base.html' %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2>Create a New Post</h2>
+    <form method="POST" enctype="multipart/form-data" class="create-post-form">
+        {% csrf_token %}
+        <div class="mb-3">
+            {{ form.as_p }}
+        </div>
+        <button type="submit" class="btn btn-primary">Create Post</button>
+    </form>
+</div>
+
+<style>
+    .create-post-form {
+        background-color: #ffffff; /* Белый фон для формы */
+        border: 1px solid #dee2e6; /* Легкая граница формы */
+        border-radius: 4px; /* Скругленные углы */
+        padding: 20px; /* Внутренние отступы формы */
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Легкая тень */
+    }
+
+    .create-post-form .form-group {
+        margin-bottom: 15px; /* Отступ между полями формы */
+    }
+
+    .create-post-form label {
+        font-weight: bold; /* Жирный текст для меток */
+    }
+
+    .create-post-form input[type="text"],
+    .create-post-form input[type="file"],
+    .create-post-form textarea {
+        border-radius: 4px; /* Скругленные углы для полей ввода */
+    }
+
+    /* Стили для поля caption */
+    .create-post-form textarea {
+        width: 100%; /* Полная ширина формы */
+        height: 150px; /* Задали высоту поля */
+        padding: 10px; /* Внутренние отступы */
+        border: 1px solid #ced4da; /* Легкая граница */
+        border-radius: 4px; /* Скругленные углы */
+        resize: vertical; /* Пользователь может изменить высоту */
+        font-size: 1rem; /* Размер шрифта */
+        font-family: 'Arial', sans-serif; /* Шрифт */
+    }
+
+    .create-post-form .btn-primary {
+        background-color: #007bff; /* Цвет фона кнопки */
+        border: none; /* Без границы */
+        border-radius: 4px; /* Скругленные углы */
+    }
+
+    .create-post-form .btn-primary:hover {
+        background-color: #0056b3; /* Цвет фона при наведении */
+    }
+</style>
+{% endblock %}

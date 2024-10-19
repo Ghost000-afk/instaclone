@@ -1,0 +1,19 @@
+{% extends 'posts/base.html' %}
+
+{% block content %}
+<h2>{{ user_profile.user.username }}'s Following</h2>
+
+<!-- Search Form -->
+<form method="GET" action=".">
+    <input type="text" name="q" placeholder="Search following users" value="{{ query|default:'' }}">
+    <button type="submit" class="btn btn-primary">Search</button>
+</form>
+
+<ul>
+    {% for followee in following %}
+        <li><a href="{% url 'profile' user_id=followee.id %}">{{ followee.user.username }}</a></li>
+    {% empty %}
+        <p>Not following anyone yet.</p>
+    {% endfor %}
+</ul>
+{% endblock %}

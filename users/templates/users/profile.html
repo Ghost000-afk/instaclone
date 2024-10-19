@@ -1,0 +1,104 @@
+{% extends 'posts/base.html' %}
+{% load static %}
+
+{% block content %}
+<style>
+    /* Увеличиваем размер фото профиля */
+    .profile-picture {
+        max-width: 250px;
+        margin-right: 30px;
+    }
+
+    /* Выравниваем Followers и Following справа от фото профиля */
+    .profile-info {
+        display: flex;
+        align-items: center;
+    }
+
+    .followers-following {
+        display: flex;
+        flex-direction: row;
+        gap: 20px;
+    }
+
+    .followers-following p {
+        margin: 0;
+        font-size: 1.2rem;
+    }
+
+    /* Фиксированный размер карточек постов */
+    .post-card {
+        max-width: 250px;
+        height: 300px;
+    }
+
+    .post-card img {
+        max-height: 150px;
+        object-fit: cover;
+    }
+</style>
+
+<div class="container mt-5">
+    <h2>{{ user_profile.user.username }}'s Profile</h2>
+    
+    <div class="profile-info">
+        {% if user_profile.profile_picture %}
+            <img src="{{ user_profile.profile_picture.url }}" alt="{{ user_profile.user.username }}'s profile picture" class="img-fluid profile-picture">
+        {% else %}
+            <p>No profile picture available</p>
+        {% endif %}
+        
+        <div class="followers-following">
+            <p>Followers: <a href="{% url 'followers_list' user_profile.id %}">{{ user_profile.followers.count }}</a></p>
+            <p>Following: <a href="{% url 'following_list' user_profile.id %}">{{ user_profile.following.count }}</a></p>
+        </div>
+    </div>
+    
+    <p>{{ user_profile.bio }}</p>
+    
+    <!-- Follow/Unfollow Buttons -->
+    {% if user.userprofile != user_profile %}
+        {% if is_following %}
+            <form method="POST" action="{% url 'unfollow_user' user_id=user_profile.id %}">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-danger">Unfollow</button>
+            </form>
+        {% else %}
+            <form method="POST" action="{% url 'follow_user' user_id=user_profile.id %}">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-success">Follow</button>
+            </form>
+        {% endif %}
+        <!-- Send Message Button -->
+        <a href="{% url 'start_conversation' user_id=user_profile.id %}" class="btn btn-secondary mt-3">Send Message</a>
+    {% else %}
+        <a href="{% url 'edit_profile' %}" class="btn btn-primary">Edit Profile</a>
+    {% endif %}
+
+    <hr>
+
+    <h3>Posts by {{ user_profile.user.username }}</h3>
+    <div class="row">
+        {% for post in user_profile.posts.all %}
+            <div class="col-md-4">
+                <div class="card mb-4 post-card">
+                    {% if post.image %}
+                        <img src="{{ post.image.url }}" class="card-img-top" alt="Post Image">
+                    {% else %}
+                        <img src="{% static 'default-image.jpg' %}" class="card-img-top" alt="Default Image">
+                    {% endif %}
+                    <div class="card-body">
+                        <p class="card-text">{{ post.caption }}</p>
+                        <a href="{% url 'post_detail' post.id %}" class="btn btn-primary">View Post</a>
+                        {% if user.userprofile == user_profile %}
+                            <a href="{% url 'delete_post' post_id=post.id %}" class="btn btn-danger">Delete</a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        {% empty %}
+            <p>No posts available</p>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

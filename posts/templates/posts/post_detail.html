@@ -1,0 +1,133 @@
+{% extends 'posts/base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="mt-5">
+    <!-- Post details -->
+    <h2 class="post-title">{{ post.user.user.username }}'s Post</h2>
+    {% if post.image %}
+        <img src="{{ post.image.url }}" alt="Post Image" class="img-fluid post-image">
+    {% endif %}
+    <p class="post-caption">{{ post.caption }}</p>
+
+    <!-- Like functionality -->
+    <div class="like-section">
+        <form method="POST" action="{% url 'like_post' post.id %}">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-primary like-button">
+                {% if user in post.likes.all %}
+                    Unlike ({{ post.likes.count }})
+                {% else %}
+                    Like ({{ post.likes.count }})
+                {% endif %}
+            </button>
+        </form>
+    </div>
+
+    <hr class="section-divider">
+    
+    <!-- Comments Section -->
+    <div class="comments-section">
+        <h3 class="comments-title">Comments</h3>
+        
+        <!-- Display each comment -->
+        {% for comment in comments %}
+            <div class="comment-item">
+                <p><strong>{{ comment.user.user.username }}:</strong> {{ comment.text }}</p>
+
+                <!-- Reply to comment -->
+                <form method="POST" action="{% url 'add_comment_reply' post.id comment.id %}" class="reply-form">
+                    {% csrf_token %}
+                    <textarea name="text" rows="2" class="form-control comment-textarea"></textarea>
+                    <button type="submit" class="btn btn-secondary mt-2">Reply</button>
+                </form>
+            </div>
+
+            <!-- Display replies if they exist -->
+            {% for reply in comment.replies.all %}
+                <div class="reply-item">
+                    <p><strong>{{ reply.user.user.username }}:</strong> {{ reply.text }}</p>
+                </div>
+            {% endfor %}
+        {% endfor %}
+    </div>
+
+    <!-- Add top-level comment -->
+    <div class="add-comment-section">
+        <h4 class="add-comment-title">Add a Comment</h4>
+        <form method="POST" action="{% url 'add_comment' post.id %}">
+            {% csrf_token %}
+            <textarea name="text" rows="2" class="form-control comment-textarea"></textarea>
+            <button type="submit" class="btn btn-primary mt-2">Add Comment</button>
+        </form>
+    </div>
+</div>
+
+<style>
+    .post-title {
+        font-size: 1.5rem;
+        margin-bottom: 15px;
+    }
+
+    .post-image {
+        max-width: 100%;
+        border-radius: 4px;
+        margin-bottom: 15px;
+    }
+
+    .post-caption {
+        font-size: 1.2rem;
+        margin-bottom: 20px;
+    }
+
+    .like-section {
+        margin-bottom: 20px;
+    }
+
+    .like-button {
+        width: 150px;
+        text-align: center;
+    }
+
+    .section-divider {
+        margin: 30px 0;
+    }
+
+    .comments-section {
+        margin-bottom: 30px;
+    }
+
+    .comments-title {
+        font-size: 1.3rem;
+        margin-bottom: 20px;
+    }
+
+    .comment-item {
+        margin-bottom: 15px;
+    }
+
+    .reply-form {
+        margin-top: 10px;
+        margin-left: 20px;
+    }
+
+    .comment-textarea {
+        width: 80%; /* Уменьшаем ширину текстового поля */
+        resize: none;
+    }
+
+    .reply-item {
+        margin-left: 40px;
+        margin-bottom: 10px;
+    }
+
+    .add-comment-section {
+        margin-top: 30px;
+    }
+
+    .add-comment-title {
+        font-size: 1.2rem;
+        margin-bottom: 15px;
+    }
+</style>
+{% endblock %}

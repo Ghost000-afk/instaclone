@@ -1,0 +1,55 @@
+{% extends 'posts/base.html' %}
+
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col-md-4"> <!-- Устанавливаем ширину блока на 4 из 12 частей -->
+            <h2>All Posts</h2>
+            <form method="GET" action="{% url 'index' %}">
+                <input type="text" class="form-control mb-2" name="q" placeholder="Search posts..." value="{{ request.GET.q }}">
+                <button type="submit" class="btn btn-primary">Search</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+
+{% if posts %}
+    <div class="list-group">
+        {% for post in posts %}
+            <div class="list-group-item">
+                <h5>
+                    <a href="{% url 'profile' user_id=post.user.id %}">
+                        @{{ post.user.user.username }}
+                    </a>
+                </h5>
+                {% if post.image %}
+                    <img src="{{ post.image.url }}" alt="Post Image" class="img-fluid mb-2" style="max-width: 100%; height: auto;">
+                {% endif %}
+                <p>{{ post.caption }}</p>
+
+                {% if user.is_authenticated %}
+                    <!-- Like Button -->
+                    <form method="POST" action="{% url 'like_post' post.id %}">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-outline-primary">
+                            {% if user.userprofile in post.likes.all %}
+                                Unlike ({{ post.likes.count }})
+                            {% else %}
+                                Like ({{ post.likes.count }})
+                            {% endif %}
+                        </button>
+                    </form>
+                {% else %}
+                    <p>Please <a href="{% url 'login' %}">login</a> to like posts.</p>
+                {% endif %}
+
+                <a href="{% url 'post_detail' post.id %}" class="btn btn-secondary">View Details</a>
+            </div>
+        {% endfor %}
+    </div>
+{% else %}
+    <p>No posts available.</p>
+{% endif %}
+{% endblock %}

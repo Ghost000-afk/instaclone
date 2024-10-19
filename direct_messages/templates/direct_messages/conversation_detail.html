@@ -1,0 +1,85 @@
+{% extends 'posts/base.html' %}
+{% load static %}
+{% load l10n %}
+
+{% block title %}
+Conversation
+{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2>Conversation with 
+        {% for participant in conversation.participants.all %}
+            {% if participant != user.userprofile %}
+                {{ participant.user.username }}
+            {% endif %}
+        {% endfor %}
+    </h2>
+
+    <div class="messages-container">
+        <div class="messages mt-4 mb-4">
+            {% for message in conversation.messages.all %}
+                <div class="message {% if message.sender == user.userprofile %}sent{% else %}received{% endif %}">
+                    <p><strong>{{ message.sender.user.username }}:</strong> {{ message.text }}</p>
+                    <small class="text-muted">{{ message.created_at|timesince }} ago</small>
+                </div>
+            {% empty %}
+                <p>No messages yet. Start the conversation!</p>
+            {% endfor %}
+        </div>
+
+        <form method="POST" action="{% url 'send_message' conversation.id %}" class="message-form">
+            {% csrf_token %}
+            <div class="form-group">
+                <textarea class="form-control" name="message" placeholder="Type your message here..." rows="3"></textarea>
+            </div>
+            <button type="submit" class="btn btn-primary">Send</button>
+        </form>
+    </div>
+</div>
+
+<style>
+    .messages-container {
+        display: flex;
+        flex-direction: column;
+        height: 80vh; /* Adjust height as needed */
+        margin-bottom: 80px; /* Space for the form */
+    }
+
+    .messages {
+        flex: 1;
+        padding: 10px;
+        background-color: #f8f9fa;
+        border-radius: 5px;
+        border: 1px solid #dee2e6;
+        overflow-y: auto; /* Allows scrolling */
+    }
+
+    .message {
+        margin-bottom: 10px;
+        padding: 10px;
+        border-radius: 4px;
+    }
+
+    .sent {
+        text-align: right;
+        background-color: #e1f5fe; /* Light blue for sent messages */
+    }
+
+    .received {
+        text-align: left;
+        background-color: #f1f8e9; /* Light green for received messages */
+    }
+
+    .form-group textarea {
+        resize: none; /* Prevent resizing the textarea */
+    }
+
+    .message-form {
+        margin-top: auto; /* Push the form to the bottom of the container */
+        padding: 15px;
+        background-color: #fff;
+        border-top: 1px solid #dee2e6;
+    }
+</style>
+{% endblock %}
